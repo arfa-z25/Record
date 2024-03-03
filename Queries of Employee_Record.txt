@@ -1,0 +1,101 @@
+use Employee_Data;
+Create Table Employee_Detail(E_id varchar(15) NOT NULL, Employee_Name varchar(40), Age varchar(20),
+gender varchar(20) , Picture_Link varchar(300) , No_OF_Projects numeric(20,0) ,
+Active bit , Inactive bit , Phone_No varchar(30) , Address_ varchar(60),
+D_id varchar (15) ,P_id varchar(15) Null , Primary key(E_id) , 
+Foreign Key(D_id) References Department(D_id) ON Update Cascade On Delete Cascade,
+Foreign Key(P_id) References Project_Details(P_id) ON Update Cascade On Delete Cascade);
+
+
+
+Select * from Employee_Detail;
+Insert into Employee_Detail values
+('E1',	'Ehtasham Ali',	'27',	'Male','C:\Users\hp\Downloads\Employee_Record_Arfa2\download (2).jpeg',5,1 , 0,	'+923456722997',	'FSD street no 4',	'IT101',Null),
+('E2',	'Ayesha Khan','25',	'Female','C:\Users\hp\Downloads\Employee_Record_Arfa2\download (1).jpeg',7,1,0	,'+923455589743',	'FSD gulshan Colony'	,'SL103',NULL),
+('E3',	'Munawar Rehman',	'23',	'Male','C:\Users\hp\Downloads\Employee_Record_Arfa2\download.jpeg',3,0,1,	'+924538897561',	'FSD gulbergC',	'MK102',NULL),
+('E4',	'Furqan Querashi',	'29',	'Male','C:\Users\hp\Downloads\Employee_Record_Arfa2\download (5).jpeg',7,1,0,	'+9213559837',	'FSD Nishatabad',	'MK102',NULL),
+('E5',	'Rehman Zafar',	'29',	'Male','C:\Users\hp\Downloads\Employee_Record_Arfa2\images (1).jpeg',7,1,0,	'+9213559837',	'FSD Nishatabad',	'MK102',NULL),
+
+('E7',	'Zarnish Ali',	'24',	'Female','C:\Users\hp\Downloads\images.jpg',7,1,0,	'+92884422199',	'FSD Green Town',	'IT101',NULL),
+('E6',	'Haseeb Zahid',	'24',	'Male','C:\Users\hp\Downloads\Haseeb Zahid.jpg',9,1,0,	'+92884422188',	'FSD Jinah',	'PR104',NULL),
+('E8',	'Minahil Yousuf','23','Female',	'C:\Users\hp\Downloads\passport-picture-smiling-woman-long-260nw-285758942.jpg',9,1,0,	'+92884422188',	'FSD Jinah','SL103',NULL);
+
+select * from Department;
+Select Count(E_id)  as Count_of_Employee from Employee_Detail;
+Select Count(E_id) AS Active_Employee from Employee_Detail where Active=1;
+Select Count(E_id) AS Active_Employee from Employee_Detail where Inactive=1;
+Delete From Employee_Detail Where E_id = 'E9';
+Select e.Employee_Name , e.No_OF_Projects , e.Gender , e.Phone_No , e.Address_ ,d.D_id , from Employee_Detail e Inner Join 
+Department d On e.D_id=d.D_id;
+
+--------------------------------------------------------------------------------------
+select * from Project;
+Create TABLE Project_Details (P_id varchar(15) Not Null , Project_Name varchar (30) , Project_Budget
+varchar(40) ,Project_Status varchar(30) ,   Primary Key(P_id) );
+insert into Project_Details values
+('P1',	'INF44',	3000000,'70% completed'),
+('P2' ,	'WRT32',	200000,'40% completed'),
+('P3',	'EP98',	2500000,'20% completed'),
+('P4',	'ZXCT',	5000000,'50% completed'),
+('P5',	'QT634',	3000000,'60% Completed'),
+('P6',	'TR432',	3500000,'80% completed'),
+('P7',	'UT66',	100000,'30% completed'),
+('P8',	'AY88',	4000000,'30% completed');
+select * from Project_Details;
+Select Project_Status From Project_Detail where P_id = 'P8';
+Select Project_Status From Project_Detail where P_id = 'P5';
+Select Project_Status From Project_Detail where P_id = 'P4';
+
+------------------------------------------------------------------------------------------
+Create Table Salary_D (S_Date Varchar(60) Not Null , E_id varchar(15) Not Null,
+Type_E varchar(30) ,Salary_Amount Decimal(13,2) , Primary Key(S_Date , E_id) ,
+Foreign Key(E_id ) References Employee_Detail(E_id) On update cascade On Delete Cascade);
+
+select * from Salary_D;
+Insert into Salary_D values
+('29-02-22',	'E1',	'FULL TIME',	60000.00),
+('22-02-23',	'E2',	'PART TIME',	40000.00),
+('30-07-22',	'E3',	'Contract',	70000.00);
+
+Drop Table Salary_D;
+Drop Table Project_Details;
+Drop Table Employee_Detail;
+
+
+--------------------------------------------------------------------------------------------
+CREATE PROCEDURE Assign_Projects 
+    @E_id VARCHAR(15),
+    @P_id VARCHAR(15)
+AS
+BEGIN 
+    UPDATE Employee_Detail 
+    SET P_id = @P_id 
+    WHERE E_id = @E_id;
+END;
+EXEC Assign_Projects @E_id = 'E4' , @P_id='P3';
+
+-------------------------------------------------------------------------------------
+CREATE PROCEDURE Show_Status 
+    @P_id VARCHAR(15)
+AS
+BEGIN 
+    Select Project_Status from Project_Details where P_id=@P_id;
+END;
+Drop Procedure Show_Status;
+Exec Show_Status @P_id='P2';
+-----------------------------------------------------------------------------------------------
+Create View Show_Project AS 
+Select p.Project_Name , p.Project_Budget ,p.Project_Status  , e.Employee_Name from Project_Details p Inner Join Employee_Detail e
+ON p.P_id=e.P_id ;
+
+Select * from Show_Project ;
+
+----------------------------------------------------------------------------------------
+
+Drop Table Employee_Detail;
+Drop Table Salary_D;
+Drop Table Project_Details;
+
+
+
+
